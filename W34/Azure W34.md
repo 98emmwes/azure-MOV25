@@ -5,16 +5,18 @@
 Länk till mitt GitHub-repo för kursen: https://github.com/98emmwes/azure-MOV25/tree/main
 
 ## Delmoment 2: Virtuell Server
-Jag skapade en resursgrupp och en virtuell maskin.
+<p>Jag skapade en resursgrupp och en virtuell maskin.
+  </p>
+  
 **Resource Group**
-Name: rg-novatrix-v34
-Region: (Europe) Sweden Central
+<p>Name: rg-novatrix-v34<br>
+Region: (Europe) Sweden Central</p>
 
 **Virtual Machine**
-Name: vm-novatrix-web
-OS/Image: Linux/Ubuntu Server 24.04 LTS - x64 Gen 2
-Size: Standard B2ats v2
-Opened ports: Port 80 (opened after installation and configuration of Nginx)
+<p>Name: vm-novatrix-web<br>
+OS/Image: Linux/Ubuntu Server 24.04 LTS - x64 Gen 2<br>
+Size: Standard B2ats v2<br>
+Opened ports: Port 80 (opened after installation and configuration of Nginx)</p>
 
 ## Delmoment 3: Konfigurera värdmiljön
 Vid uppskapning av VM i Azure så skapades en SSH-nyckel som jag laddade ned och lade på ett säkert ställe. Sedan använde jag mig av följande kommandon för att använda nyckeln och ge behörigheter till enheten som jag arbetar från för att kunna ansluta till VM:en och installera Nginx.
@@ -46,18 +48,18 @@ systemctl status nginx
 
 ## Delmoment 4: Kundtjänstsida med ärendeformulär
 **Öppna port 80**
-För att kunna se hemsidan utifrån så öppnade jag port 80 (http) i Azure under:
+För att kunna se hemsidan utifrån så öppnade jag port 80 (http) i Azure under:<br>
 Home -> vm-novatrix-web -> Networking -> Network Settings -> Rules -> + Create port rule -> Inbound rule
 
 **Port rule-inställningar**
-Source: Any
-Source port ranges: *
-Destination: Any
-Service: HTTP
-Destination port ranges: 80
-Protocol: TCP
-Action: Allow
-Priority: 310
+Source: Any<br>
+Source port ranges: *<br>
+Destination: Any<br>
+Service: HTTP<br>
+Destination port ranges: 80<br>
+Protocol: TCP<br>
+Action: Allow<br>
+Priority: 310<br>
 Name: allow-http
 ___
 **Anpassa kundtjänstsida och formulär**
@@ -126,3 +128,8 @@ icacls $key
 ssh -i $key azureuser@74.241.129.149
 ```
 ## Delmoment 5: Verifiera och dokumentera
+<img width="1120" height="539" alt="Skärmbild 2026-09-03 224203" src="https://github.com/user-attachments/assets/21f0f2fc-8249-4977-9aac-47fce6125217" />
+<img width="1407" height="837" alt="Skärmbild 2026-09-03 224304" src="https://github.com/user-attachments/assets/32922484-a2f5-40bb-956e-a04f85ddad37" />
+<img width="1365" height="788" alt="Skärmbild 2026-09-03 224409" src="https://github.com/user-attachments/assets/c1ff5d52-156f-4dbd-9868-f9811f16ee3a" />
+
+
