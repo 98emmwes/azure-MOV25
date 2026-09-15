@@ -1,5 +1,6 @@
 # Azure W35
 **Emma Westberg**
+GitHub repo: https://github.com/98emmwes/azure-MOV25
 
 ### Identiteter
 Jag har skapat två användare och två grupper för veckans uppgift. Respektive användare med namn som matchar gruppnamnet har lagts till i respektive grupp. Användarna har fått dessa specifika användarkonton som de ska använda för när de ska göra administrativa saker så att rättigheterna inte sätts på deras egna användarkonton som används på en daglig basis. Detta för att minska risken för katastrofala misstag under dagligt arbete eller vid potentiella intrång på deras användarkonton som de använder dagligen.<br>
@@ -21,6 +22,3 @@ Nedan är verifiering av utveckling-freds behörigheter. <br>
 <img width="954" height="358" alt="Skärmbild 2026-09-10 202519" src="https://github.com/user-attachments/assets/2f07f9ad-2634-4da3-939d-248b974db848" />
 
 
-
-!NOTE För mig
-Skumma video 1, kolla från ca 1 timme in.
