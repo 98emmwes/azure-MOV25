@@ -9,12 +9,12 @@ Därefter skapade jag två subnät för det. En för webbsidan med formuläret (
 | Subnät | IP Range | NSG | Syfte |
 | :--- | :--- | :--- | :--- |
 | snet-web | 10.0.1.0 - 10.0.1.255 |```nsg-web```| Subnet för ```vm-novatrix-web``` mot internet. |
-| snet-db | 10.0.2.0 - 10.0.2.255 |```nsg-db```| Tomt för tillfället. Förplanerat subnät för framtida databas. |
+| snet-db | 10.0.2.0 - 10.0.2.255 | --- | Tomt för tillfället. Förplanerat subnät för framtida databas. |
 
 <br>
 
 #### NSG (Network Security Group) regler<br>
-För att subnäten ska få någon vidare effekt på trafiken så skapade jag en Network Security Group som jag sedan kopplade till subnätet. Jag döpte NSG:n till ```nsg-web``` och öppnade upp portarna  ```80``` (HTTP) och ```443``` (HTTPS) för inkommande trafik och port ```22``` (SSH) för inkommande trafik från administratör.
+För att subnäten ska få någon vidare effekt på trafiken så skapade jag en Network Security Group som jag sedan kopplade till subnätet ```snet-web```. Jag döpte NSG:n till ```nsg-web``` och öppnade upp portarna  ```80``` (HTTP) och ```443``` (HTTPS) för inkommande trafik och port ```22``` (SSH) för inkommande trafik från administratör.
 
 ##### nsg-web <br>
 
