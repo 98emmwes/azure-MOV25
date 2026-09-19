@@ -14,6 +14,8 @@ Därefter skapade jag två subnät för det. En för webbsidan med formuläret (
 <br>
 
 #### NSG (Network Security Group) regler<br>
+För att subnäten ska få någon vidare effekt på trafiken så skapade jag en Network Security Group som jag sedan kopplade till subnätet. Jag döpte NSG:n till ```nsg-web``` och öppnade upp portarna  ```80``` (HTTP) och ```443``` (HTTPS) för inkommande trafik och port ```22``` (SSH) för inkommande trafik från administratör.
+
 ##### nsg-web <br>
 
 | Priority | Name | Port | Protocol | Source | Source Tag | Action |
@@ -24,17 +26,8 @@ Därefter skapade jag två subnät för det. En för webbsidan med formuläret (
 
 <br>
 
-##### nsg-db<br>
-
-| Priority | Name | Port | Protocol | Source | Source Tag | Action |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 100 | Allow-80-HTTP | ```80``` (HTTP) | TCP | ```Service Tag``` | ```Internet``` | Allow |
-| 110 | Allow-443-HTTPS | ```443``` (HTTPS) | TCP | ```Service Tag``` | ```Internet``` | Allow |
-
-<br>
-
 #### Network Interface<br>
-Eftersom jag inte ännu hade skapat vnet och subnet när jag skapade min VM under vecka 34, ```vm-novatrix-web```, så hade jag anslutit min VM till Azures default virtuella nätverkskort vid uppskapning. Eftersom en VM blir låst i det vnet som den uppskapas i så blev jag tvungen att skapa en ny VM som jag anslöt till korrekt vnet och subnet. <br>
+Eftersom jag inte ännu hade skapat vnet eller subnet när jag skapade min VM under vecka 34, ```vm-novatrix-web```, så hade jag anslutit min VM till Azures default virtuella nätverkskort vid uppskapning. Eftersom en VM blir låst i det vnet som den skapas i så blev jag tvungen att skapa en ny VM, med den gamla disken, som jag anslöt till korrekt vnet och subnet. <br>
 
 ##### Network Interface Specifics
 | Resouce Group | Name | Virtual Network | Subnet
