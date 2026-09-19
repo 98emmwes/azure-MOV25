@@ -29,10 +29,10 @@ För att subnäten ska få någon vidare effekt på trafiken så skapade jag en 
 #### Network Interface<br>
 Eftersom jag inte ännu hade skapat vnet eller subnet när jag skapade min VM under vecka 34, ```vm-novatrix-web```, så hade jag anslutit min VM till Azures default virtuella nätverkskort vid uppskapning. Eftersom en VM blir låst i det vnet som den skapas i så blev jag tvungen att skapa en ny VM, med den gamla disken, som jag anslöt till korrekt vnet och subnet. <br>
 
-##### Network Interface Specifics
+##### Network Interface Specifics for vm-novatrix-web <br>
 | Resouce Group | Name | Virtual Network | Subnet
 | :--- | :--- | :--- | :--- |
-| ```rg-novatrix-v34``` | ```nic-vm-novatrix-web``` | ```vnet-novatrix (rg-novatrix-v34)``` | ```snet-web``` |
+| ```rg-novatrix-v34``` | ```vm-novatrix-web467``` | ```vnet-novatrix (rg-novatrix-v34)``` | ```snet-web``` |
 
 <br>
 
