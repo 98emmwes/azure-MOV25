@@ -16,7 +16,7 @@ Därefter skapade jag två subnät för det. En för webbsidan med formuläret (
 #### NSG (Network Security Group) regler<br>
 För att subnäten ska få någon vidare effekt på trafiken så skapade jag en Network Security Group som jag sedan kopplade till subnätet ```snet-web```. Jag döpte NSG:n till ```nsg-web``` och öppnade upp portarna  ```80``` (HTTP) och ```443``` (HTTPS) för inkommande trafik och port ```22``` (SSH) för inkommande trafik från administratör.
 
-##### nsg-web <br>
+##### NSG-WEB SPECIFICS <br>
 
 | Priority | Name | Port | Protocol | Source | Source Tag | Action |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -35,6 +35,7 @@ Eftersom jag inte ännu hade skapat vnet eller subnet när jag skapade min VM un
 | ```rg-novatrix-v34``` | ```vm-novatrix-web467``` | ```vnet-novatrix (rg-novatrix-v34)``` | ```snet-web``` |
 
 <br>
+<img width="880" height="420" alt="vnet-novatrix-topologi_20260920" src="https://github.com/user-attachments/assets/19a93bbf-cfc2-4242-b318-8a6a70d0d20b" />
 
 #### Verifiering <br>
 Under ```Network Watcher``` -> ```Network diagnostic tools``` -> ```IP flow verify``` kan jag verifiera vilken trafik som släpps in. <br>
