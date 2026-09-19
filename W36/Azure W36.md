@@ -1,6 +1,6 @@
 # Azure W36
 #### Emma Westberg<br>
-GitHub repo: GitHub repo: https://github.com/98emmwes/azure-MOV25 <br>
+GitHub repo: https://github.com/98emmwes/azure-MOV25 <br>
 
 ### Nätverket <br>
 Jag skapade ett VNet till ärendeformuläret från "...W34". VNet:et heter ```vnet-novatrix``` och har adressrymden ```10.0.0.0/16```. <br>
