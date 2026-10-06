@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nordvik Fastigheter - Felanmälan</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #eef2f1; margin: 50px; }
+        .container {
+            background-color: #ffffff; padding: 30px; max-width: 520px;
+            margin: 0 auto; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #1f4e46; }
+        label { font-weight: bold; color: #35615a; }
+        input, textarea, select {
+            width: 100%; padding: 10px; margin: 5px 0 15px 0;
+            border: 1px solid #c5d4d1; border-radius: 4px; box-sizing: border-box;
+        }
+        button {
+            background-color: #1f4e46; color: white; padding: 10px 15px; border: none;
+            border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px;
+        }
+        button:hover { background-color: #163a34; }
+        .hint { font-size: 13px; color: #5d6f6c; margin-top: -10px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Nordvik Fastigheter</h1>
+        <p>Hyresgästportal. Använd formuläret för att göra en felanmälan.</p>
+
+        <!-- Skickas som multipart/form-data till /submit (kopplas in i steg 3).
+             enctype behövs för att bilden ska följa med. -->
+        <form action="/submit" method="POST" enctype="multipart/form-data">
+            <label for="rubrik">Rubrik:</label>
+            <input type="text" id="rubrik" name="rubrik" required>
+
+            <label for="kategori">Kategori:</label>
+            <select id="kategori" name="kategori" required>
+                <option value="varme">Värme</option>
+                <option value="vatten">Vatten</option>
+                <option value="las">Lås</option>
+                <option value="el">El</option>
+                <option value="ventilation">Ventilation</option>
+                <option value="ovrigt">Övrigt</option>
+            </select>
+            <p class="hint">Värme, vatten och lås är akuta och larmar förvaltaren direkt.</p>
+
+            <label for="fastighet">Fastighet och lägenhet:</label>
+            <input type="text" id="fastighet" name="fastighet" required>
+
+            <label for="beskrivning">Beskrivning:</label>
+            <textarea id="beskrivning" name="beskrivning" rows="5" required></textarea>
+
+            <label for="bild">Bild på felet:</label>
+            <input type="file" id="bild" name="bild" accept="image/*">
+
+            <button type="submit">Skicka felanmälan</button>
+        </form>
+    </div>
+</body>
+</html>

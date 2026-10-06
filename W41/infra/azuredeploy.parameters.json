@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "namePrefix": { "value": "nordvik" },
+    "location": { "value": "swedencentral" },
+    "userName": { "value": "98emmwes" },
+    "storageSuffix": { "value": "01" },
+    "sku": { "value": "Standard_ZRS" },
+    "adminIp": { "value": "BYT_UT_MOT_DIN_EGEN_IP" },
+    "sshPublicKey": { "value": "BYT_UT_MOT_DIN_EGEN_SSH_NYCKEL" },
+    "repoUrl": { "value": "https://github.com/98emmwes/azure-MOV25.git" },
+    "repoFolder": { "value": "W41" }
+  }
+}
