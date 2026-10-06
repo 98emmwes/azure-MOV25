@@ -16,7 +16,7 @@
       "type": "string",
       "minLength": 3,
       "maxLength": 13,
-      "metadata": { "description": "Ditt anvandarnamn, anvands i storage-namnet (t.ex. 80andsve). Max 13 tecken for att rymmas i 24." }
+      "metadata": { "description": "Ditt anvandarnamn, anvands i storage-namnet. Max 13 tecken for att rymmas i 24." }
     },
     "storageSuffix": {
       "type": "string",
