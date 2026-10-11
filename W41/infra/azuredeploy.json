@@ -372,7 +372,7 @@
               ]
             }
           },
-          "customData": "[base64(format('#cloud-config\npackage_update: true\npackages:\n- nginx\n- git\n- openssl\nruncmd:\n- git clone {0} /tmp/repo\n- cp /tmp/repo/{1}/app/public/index.html /var/www/html/index.html\n- cp /tmp/repo/{1}/app/nginx-nordvik.conf /etc/nginx/sites-available/default\n- mkdir -p /etc/ssl/nordvik\n- openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nordvik/nordvik.key -out /etc/ssl/nordvik/nordvik.crt -subj /CN=nordvik\n- systemctl restart nginx\n', parameters('repoUrl'), parameters('repoFolder')))]"
+          "customData": "[base64(format('#cloud-config\npackage_update: true\npackages:\n- nginx\n- git\n- openssl\n- python3-venv\nruncmd:\n- mkdir -p /etc/ssl/nordvik\n- openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nordvik/nordvik.key -out /etc/ssl/nordvik/nordvik.crt -subj /CN=nordvik\n- git clone {0} /tmp/repo\n- bash /tmp/repo/{1}/app/setup-app.sh {0} {1} {2} {3}\n', parameters('repoUrl'), parameters('repoFolder'), variables('storageAccountName'), reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('appIdentityName')), '2023-01-31').clientId))]"
         },
         "storageProfile": {
           "diskControllerType": "[parameters('vmDiskControllerType')]",
