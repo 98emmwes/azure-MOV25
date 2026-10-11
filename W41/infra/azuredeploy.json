@@ -62,6 +62,16 @@
       "defaultValue": "W41",
       "metadata": { "description": "Mappen i repot som innehaller app/ och infra/ (t.ex. W41)." }
     },
+    "forvaltareGroupId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": { "description": "Objekt-ID for sakerhetsgruppen sg-nordvik-forvaltare (Entra ID). Tom = ingen rolltilldelning skapas." }
+    },
+    "ekonomiGroupId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": { "description": "Objekt-ID for sakerhetsgruppen sg-nordvik-ekonomi (Entra ID). Tom = ingen rolltilldelning skapas." }
+    },
     "tags": {
       "type": "object",
       "defaultValue": {
@@ -85,7 +95,10 @@
     "appIdentityName": "[format('id-{0}-app', parameters('namePrefix'))]",
     "storagePeName": "[format('pe-{0}-storage', parameters('namePrefix'))]",
     "dnsZoneName": "privatelink.blob.core.windows.net",
-    "contributorRoleId": "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+    "contributorRoleId": "ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+    "readerRoleId": "2a2b9908-6ea1-4ae2-8e65-a410df84e7d1",
+    "dokumentContainerName": "dokument",
+    "containerScope": "[format('Microsoft.Storage/storageAccounts/{0}/blobServices/default/containers/{1}', variables('storageAccountName'), variables('containerName'))]"
   },
   "resources": [
     {
@@ -119,6 +132,46 @@
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
       ],
       "properties": { "publicAccess": "None" }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2023-01-01",
+      "name": "[format('{0}/default/{1}', variables('storageAccountName'), variables('dokumentContainerName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+      ],
+      "properties": { "publicAccess": "None" }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/managementPolicies",
+      "apiVersion": "2023-01-01",
+      "name": "[format('{0}/default', variables('storageAccountName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', variables('storageAccountName'), 'default', variables('dokumentContainerName'))]"
+      ],
+      "properties": {
+        "policy": {
+          "rules": [
+            {
+              "name": "dokument-till-cool",
+              "enabled": true,
+              "type": "Lifecycle",
+              "definition": {
+                "filters": {
+                  "blobTypes": [ "blockBlob" ],
+                  "prefixMatch": [ "dokument/" ]
+                },
+                "actions": {
+                  "baseBlob": {
+                    "tierToCool": { "daysAfterModificationGreaterThan": 90 }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
     },
     {
       "type": "Microsoft.Network/networkSecurityGroups",
@@ -207,6 +260,7 @@
             "name": "snet-data",
             "properties": {
               "addressPrefix": "10.0.2.0/24",
+              "privateEndpointNetworkPolicies": "NetworkSecurityGroupEnabled",
               "networkSecurityGroup": {
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgDataName'))]"
               }
@@ -303,6 +357,36 @@
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('appIdentityName')), '2023-01-31').principalId]",
         "principalType": "ServicePrincipal",
         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('contributorRoleId'))]"
+      }
+    },
+    {
+      "condition": "[not(empty(parameters('forvaltareGroupId')))]",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(variables('containerScope'), parameters('forvaltareGroupId'), variables('contributorRoleId'))]",
+      "scope": "[variables('containerScope')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', variables('storageAccountName'), 'default', variables('containerName'))]"
+      ],
+      "properties": {
+        "principalId": "[parameters('forvaltareGroupId')]",
+        "principalType": "Group",
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('contributorRoleId'))]"
+      }
+    },
+    {
+      "condition": "[not(empty(parameters('ekonomiGroupId')))]",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(variables('containerScope'), parameters('ekonomiGroupId'), variables('readerRoleId'))]",
+      "scope": "[variables('containerScope')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', variables('storageAccountName'), 'default', variables('containerName'))]"
+      ],
+      "properties": {
+        "principalId": "[parameters('ekonomiGroupId')]",
+        "principalType": "Group",
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('readerRoleId'))]"
       }
     },
     {

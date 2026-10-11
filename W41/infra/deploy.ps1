@@ -8,6 +8,7 @@
   Static values (namePrefix, userName, repoUrl ...) come from the parameter file.
 
 .EXAMPLE
+  .\deploy.ps1 -ResourceGroup rg-nordvik-test -StorageSuffix 02   # a second, separate environment
   .\deploy.ps1                 # group create + validate + what-if, then asks before create
   .\deploy.ps1 -Mode validate  # only validate
   .\deploy.ps1 -Mode whatif    # only what-if
@@ -22,7 +23,8 @@ param(
     [string]$TemplateFile   = (Join-Path $PSScriptRoot "azuredeploy.json"),
     [string]$ParameterFile  = "",   # empty = use *.local.json if it exists, else the committed file
     [string]$SshKeyPath     = (Join-Path $HOME ".ssh\id_ed25519.pub"),
-    [string]$AdminIp        = ""   # leave empty to auto-detect
+    [string]$AdminIp        = "",  # leave empty to auto-detect
+    [string]$StorageSuffix  = ""   # empty = use the value in the parameter file (e.g. 02 for a second environment)
 )
 
 $ErrorActionPreference = "Stop"
@@ -59,13 +61,13 @@ Write-Host "Template       : $TemplateFile"
 Write-Host "Parameter file : $ParameterFile"
 Write-Host "Admin IP       : $AdminIp"
 Write-Host "SSH key        : $SshKeyPath"
+if ($StorageSuffix) { Write-Host "Storage suffix : $StorageSuffix" }
 Write-Host ""
 
 # Later --parameters override earlier ones, so these win over the placeholders in the file.
-$paramArgs = @(
-    "--parameters", "@$ParameterFile",
-    "--parameters", "adminIp=$AdminIp", "sshPublicKey=$SshKey"
-)
+$overrides = @("adminIp=$AdminIp", "sshPublicKey=$SshKey")
+if ($StorageSuffix) { $overrides += "storageSuffix=$StorageSuffix" }
+$paramArgs = @("--parameters", "@$ParameterFile", "--parameters") + $overrides
 
 # --- 2. Steps ---------------------------------------------------------------
 function Invoke-GroupCreate {
