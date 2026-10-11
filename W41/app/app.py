@@ -16,8 +16,9 @@ Konfiguration kommer fran miljovariabler (satts i /etc/nordvik-app.env):
 import json
 import logging
 import os
+import re
+import secrets
 import urllib.request
-import uuid
 from datetime import datetime, timezone
 from html import escape
 
@@ -34,6 +35,10 @@ STORAGE_ACCOUNT = os.environ["STORAGE_ACCOUNT"]
 CLIENT_ID = os.environ["AZURE_CLIENT_ID"]
 CONTAINER = os.environ.get("CONTAINER_NAME", "felanmalningar")
 FLOW_URL = os.environ.get("FLOW_URL", "")
+
+# Referensnummer: lasbart och latt att saga hogt. Inga tecken som lanar pa varandra (0/O, 1/I/L).
+REF_TECKEN = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
+EPOST_RE = re.compile(r"[^@\s]+@[^@\s]+\.[^@\s]+")
 
 KATEGORIER = {"varme", "vatten", "las", "el", "ventilation", "ovrigt"}
 AKUTA = {"varme", "vatten", "las"}
@@ -73,10 +78,17 @@ a {{ color: #1f4e46; }}
     return html, status
 
 
+def ny_referens(nu):
+    """T.ex. FA-261011-K7M4PQ (datum + 6 slumpade tecken)."""
+    slump = "".join(secrets.choice(REF_TECKEN) for _ in range(6))
+    return f"FA-{nu:%y%m%d}-{slump}"
+
+
 def notifiera_flode(post):
-    """Steg 5: skicka anmalan till Power Automate om FLOW_URL ar satt. Fel stoppar inte anmalan."""
+    """Skickar anmalan till Power Automate om FLOW_URL ar satt. Returnerar True om anropet lyckades.
+    Fel stoppar inte anmalan, den ar redan sparad."""
     if not FLOW_URL:
-        return
+        return False
     try:
         req = urllib.request.Request(
             FLOW_URL,
@@ -85,8 +97,10 @@ def notifiera_flode(post):
             method="POST",
         )
         urllib.request.urlopen(req, timeout=10).close()
+        return True
     except Exception:
         log.exception("Kunde inte anropa Power Automate")
+        return False
 
 
 @app.get("/healthz")
@@ -99,11 +113,14 @@ def submit():
     rubrik = request.form.get("rubrik", "").strip()
     kategori = request.form.get("kategori", "").strip()
     fastighet = request.form.get("fastighet", "").strip()
+    epost = request.form.get("epost", "").strip()
     beskrivning = request.form.get("beskrivning", "").strip()
     bild = request.files.get("bild")
 
     if not (rubrik and fastighet and beskrivning) or kategori not in KATEGORIER:
         return sida("Felanmälan saknar uppgifter", "Fyll i alla fält och försök igen.", 400)
+    if len(epost) > 254 or not EPOST_RE.fullmatch(epost):
+        return sida("Ogiltig e-postadress", "Ange en giltig e-postadress så att vi kan skicka en bekräftelse.", 400)
     if len(rubrik) > 200 or len(fastighet) > 200 or len(beskrivning) > 5000:
         return sida("För lång text", "Korta ned texten och försök igen.", 400)
 
@@ -114,7 +131,7 @@ def submit():
             return sida("Filtypen stöds inte", "Bifoga en bild (jpg, png, gif, webp eller heic).", 400)
 
     nu = datetime.now(timezone.utc)
-    anmalan_id = f"{nu:%Y%m%dT%H%M%SZ}-{uuid.uuid4().hex[:8]}"
+    anmalan_id = ny_referens(nu)
     post = {
         "id": anmalan_id,
         "mottagen": nu.isoformat(),
@@ -122,6 +139,7 @@ def submit():
         "kategori": kategori,
         "akut": kategori in AKUTA,
         "fastighet": fastighet,
+        "epost": epost,
         "beskrivning": beskrivning,
         "bild": f"{anmalan_id}/bild.{bild_ext}" if bild_ext else None,
     }
@@ -145,10 +163,16 @@ def submit():
         return sida("Något gick fel", "Felanmälan kunde inte sparas. Försök igen om en stund.", 500)
 
     log.info("Sparade felanmalan %s (kategori=%s)", anmalan_id, kategori)
-    notifiera_flode(post)
+    skickat = notifiera_flode(post)
+    if skickat:
+        mejl = f"En bekräftelse har skickats till <strong>{escape(epost)}</strong>."
+    else:
+        mejl = "Bekräftelsen via e-post kunde inte skickas just nu, så spara referensnumret nedan."
     return sida(
         "Tack för din felanmälan",
-        f"Vi har tagit emot den. Referensnummer: <strong>{escape(anmalan_id)}</strong>.",
+        "Vi har tagit emot den.<br><br>Ditt referensnummer:<br>"
+        f'<strong style="font-size:24px;letter-spacing:2px">{escape(anmalan_id)}</strong><br><br>'
+        f"{mejl} Ange referensnumret om du kontaktar oss.",
     )
 
 
