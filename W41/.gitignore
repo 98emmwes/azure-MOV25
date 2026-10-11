@@ -1,0 +1,19 @@
+# Lokala parameterfiler med egen IP, nyckel och anvandarnamn
+*.local.json
+
+# Nycklar och certifikat
+*.key
+*.crt
+*.pem
+id_ed25519
+id_ed25519.pub
+id_rsa
+id_rsa.pub
+
+# Python
+venv/
+__pycache__/
+
+# Editor och OS
+.vscode/
+.DS_Store
