@@ -6,7 +6,7 @@
     "location": { "value": "swedencentral" },
     "userName": { "value": "98emmwes" },
     "storageSuffix": { "value": "01" },
-    "vmSize": { "value": "Standard_B2s" },
+    "vmSize": { "value": "Standard_D2s_v3" },
     "sku": { "value": "Standard_ZRS" },
     "adminIp": { "value": "BYT_UT_MOT_DIN_EGEN_IP" },
     "sshPublicKey": { "value": "BYT_UT_MOT_DIN_EGEN_SSH_NYCKEL" },
